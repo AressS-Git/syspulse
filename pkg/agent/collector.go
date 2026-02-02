@@ -1,9 +1,10 @@
 package agent
 
 import (
-    "github.com/AressS-Git/syspulse/internal/platform"
-    "time"
-    "github.com/shirou/gopsutil/v3/cpu"
+	"time"
+
+	"github.com/AressS-Git/syspulse/pkg/platform"
+	"github.com/shirou/gopsutil/v3/cpu"
 	"github.com/shirou/gopsutil/v3/disk"
 	"github.com/shirou/gopsutil/v3/host"
 	"github.com/shirou/gopsutil/v3/mem"

@@ -3,9 +3,10 @@ package agent
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"net/http"
-    "fmt"   
-	"github.com/AressS-Git/syspulse/internal/platform"
+
+	"github.com/AressS-Git/syspulse/pkg/platform"
 )
 
 // SendMetrics recibe los datos de collector.go y se los envía al servidor mediante HTTP POST verificando que llegaron de manera correcta

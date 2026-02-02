@@ -1,13 +1,29 @@
 package main
 
 import (
-    "fmt"
-    "net/http"
-    "encoding/json"
-    "github.com/AressS-Git/syspulse/internal/platform"
+	"encoding/json"
+	"fmt"
+	"net/http"
+
+	"github.com/AressS-Git/syspulse/pkg/platform"
+	"github.com/AressS-Git/syspulse/pkg/server"
+	"gorm.io/gorm"
 )
 
+// Variable dónde se guardará la conexión de Gorm a la BD
+var db *gorm.DB
+
 func main() {
+    // Crear la conexión de Gorm a la BD
+    var err error
+    db, err = server.InitDB()
+    if err != nil {
+        fmt.Println("Error al conectarse a la base de datos:", err)
+        return
+    }
+
+    fmt.Println("Conexión a la BD establecida correctamente y tablas creadas correctamente")
+
     // Las peticiones http entrantes que accedan a dicha ruta se manejarán con el handler
     http.HandleFunc("/api/stats", httpHandler)
 
@@ -15,7 +31,7 @@ func main() {
     fmt.Println("Servidor escuchando en http://localhost:8080/api/stats...")
 
     // Abrir el puerto y escuchar peticiones
-    err := http.ListenAndServe(":8080", nil)
+    err = http.ListenAndServe(":8080", nil)
     if err != nil {
         fmt.Println("Error al iniciar el servidor:", err)
     }
@@ -38,6 +54,12 @@ func httpHandler(writer http.ResponseWriter, request *http.Request) {
         return
     }
 
-    fmt.Println("Datos recibidos:", stats)
+    // Guardar los datos de stats en la BD
+    result := db.Create(&stats)
+    if result.Error != nil {
+        http.Error(writer, "Error al guardar los datos en la BD", http.StatusInternalServerError)
+    }
+
+    fmt.Println("Datos recibidos y guardados en la BD:", stats.ID, stats)
     writer.WriteHeader(http.StatusOK)
 }

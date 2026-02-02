@@ -1,10 +1,11 @@
 package main
 
 import (
-    "fmt"
-    "time"
-    "log"
-    "github.com/AressS-Git/syspulse/internal/agent"
+	"fmt"
+	"log"
+	"time"
+
+	"github.com/AressS-Git/syspulse/pkg/agent"
 )
 
 func main() {
