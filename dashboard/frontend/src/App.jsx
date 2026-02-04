@@ -40,13 +40,11 @@ function App() {
                         <tr key={item.id}>
                             <td>{item.id}</td>
                             <td>{item.hostname}</td>
-                            <td>{item.platform}</td>
-                            
+                            <td>{item.platform}</td>           
                             {/* CAMBIO 1: Usamos .toFixed(2) para dejar solo 2 decimales y añadimos el % */}
                             <td>{item.cpu.toFixed(2)}%</td>
                             <td>{item.ram.toFixed(2)}%</td>
                             <td>{item.disk.toFixed(2)}%</td>
-
                             {/* CAMBIO 2: Convertimos la fecha. 
                                 Multiplicamos por 1000 porque Go usa segundos y JS milisegundos */}
                             <td>{new Date(item.time * 1000).toLocaleTimeString()}</td>
