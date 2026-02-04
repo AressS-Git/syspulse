@@ -1,5 +1,5 @@
 package main
-/*
+
 import (
 	"embed"
 
@@ -34,4 +34,3 @@ func main() {
 		println("Error:", err.Error())
 	}
 }
-*/

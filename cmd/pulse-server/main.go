@@ -16,7 +16,7 @@ var db *gorm.DB
 func main() {
     // Crear la conexión de Gorm a la BD
     var err error
-    db, err = server.InitDB()
+    db, err = server.InitDB("/Users/sergiogomezsantos/Desktop/syspulse/syspulse.db")
     if err != nil {
         fmt.Println("Error al conectarse a la base de datos:", err)
         return

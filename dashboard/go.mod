@@ -3,7 +3,7 @@ module dashboard
 go 1.23.3
 
 require (
-	github.com/AressS-Git/syspulse v0.0.0
+	github.com/AressS-Git/syspulse v0.0.0-00010101000000-000000000000
 	github.com/wailsapp/wails/v2 v2.11.0
 	gorm.io/gorm v1.31.1
 )

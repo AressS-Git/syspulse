@@ -1,9 +1,23 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import './App.css';
+import { GetStats } from "../wailsjs/go/main/App";
 
 function App() {
-    // Aquí guardaremos los datos que vengan de Go
     const [stats, setStats] = useState([]);
+
+    useEffect(() => {
+        const loadData = () => {
+            GetStats().then((result) => {
+                if (result) {
+                    setStats(result);
+                }
+            });
+        };
+
+        loadData();
+        const loadDataRange = setInterval(loadData, 2000);
+        return () => clearInterval(loadDataRange);
+    }, []);
 
     return (
         <div className="container">
@@ -15,30 +29,29 @@ function App() {
                         <th>ID</th>
                         <th>Hostname</th>
                         <th>Plataforma</th>
-                        <th>CPU (%)</th>
-                        <th>RAM (%)</th>
-                        <th>Disco (%)</th>
+                        <th>CPU</th>
+                        <th>RAM</th>
+                        <th>Disco</th>
+                        <th>Hora</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {/* Aquí pintaremos los datos dinámicamente. 
-                        De momento ponemos una fila de ejemplo fake */}
-                    <tr>
-                        <td>1</td>
-                        <td>Server-Alpha</td>
-                        <td>linux</td>
-                        <td>12.5%</td>
-                        <td>45.2%</td>
-                        <td>80.1%</td>
-                    </tr>
-                    <tr>
-                        <td>2</td>
-                        <td>Laptop-Admin</td>
-                        <td>darwin</td>
-                        <td>5.0%</td>
-                        <td>60.0%</td>
-                        <td>20.0%</td>
-                    </tr>
+                    {stats.map((item) => (
+                        <tr key={item.id}>
+                            <td>{item.id}</td>
+                            <td>{item.hostname}</td>
+                            <td>{item.platform}</td>
+                            
+                            {/* CAMBIO 1: Usamos .toFixed(2) para dejar solo 2 decimales y añadimos el % */}
+                            <td>{item.cpu.toFixed(2)}%</td>
+                            <td>{item.ram.toFixed(2)}%</td>
+                            <td>{item.disk.toFixed(2)}%</td>
+
+                            {/* CAMBIO 2: Convertimos la fecha. 
+                                Multiplicamos por 1000 porque Go usa segundos y JS milisegundos */}
+                            <td>{new Date(item.time * 1000).toLocaleTimeString()}</td>
+                        </tr>
+                    ))}
                 </tbody>
             </table>
         </div>
