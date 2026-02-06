@@ -1,0 +1,10 @@
+# Base de datos
+syspulse.db
+
+# Archivos de sistema
+.DS_Store
+
+# Binarios y carpetas de build
+build/
+bin/
+*.exe

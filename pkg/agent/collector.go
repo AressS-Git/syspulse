@@ -2,7 +2,6 @@ package agent
 
 import (
 	"time"
-
 	"github.com/AressS-Git/syspulse/pkg/platform"
 	"github.com/shirou/gopsutil/v3/cpu"
 	"github.com/shirou/gopsutil/v3/disk"

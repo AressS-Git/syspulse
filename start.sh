@@ -2,22 +2,21 @@
 
 echo "Iniciando Sistema SysPulse..."
 
-# 1. Matamos versiones antiguas por si acaso se quedaron colgadas
+# 1. Matar el agente y el servidor por si estaban abeiertos
 pkill sys-server
 pkill sys-agent
 
-# 2. Arrancamos el Servidor en SEGUNDO PLANO (el símbolo & es la clave)
-#    Así la terminal no se queda bloqueada.
+# 2. Arrancar el servidor en segundo plano
 ./sys-server &
 echo "Servidor activo"
 
-# Esperamos 1 segundo para dar tiempo al servidor
+# Esperar un poco antes de abrir el agente para darle tiempo al servidor
 sleep 1
 
-# 3. Arrancamos el Agente en SEGUNDO PLANO
+# 3. Arrancar el agente en segundo plano
 ./sys-agent &
 echo "Agente activo"
 
-# 4. Abrimos la App gráfica (MacOS usa el comando 'open')
+# 4. Abrir el dashboard de Wails
 open dashboard/build/bin/dashboard.app
 echo "Dashboard abierto"

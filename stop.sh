@@ -2,11 +2,11 @@
 
 echo "Deteniendo todo el sistema SysPulse..."
 
-# Matamos los procesos
+# Matar el agente y el servidor
 pkill sys-server
 pkill sys-agent
 
-# Opcional: También podemos matar la app gráfica si quieres cerrarla de golpe
+# Matar el dashboard de Wails
 pkill dashboard
 
-echo "Sistema apagado correctamente."
+echo "Sistema apagado correctamente"

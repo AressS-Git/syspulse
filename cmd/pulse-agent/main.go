@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"log"
 	"time"
-
 	"github.com/AressS-Git/syspulse/pkg/agent"
 )
 
