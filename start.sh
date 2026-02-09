@@ -8,7 +8,7 @@ pkill sys-agent
 
 # 2. Arrancar el servidor en segundo plano
 ./sys-server &
-echo "Servidor activo"
+echo "Servidor encendido"
 
 # Esperar un poco antes de abrir el agente para darle tiempo al servidor
 sleep 1
