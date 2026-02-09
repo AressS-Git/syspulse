@@ -8,3 +8,7 @@ syspulse.db
 build/
 bin/
 *.exe
+
+# Los build
+sys-agent
+sys-server
