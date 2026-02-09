@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"fmt"
-	"gorm.io/gorm"
 	"github.com/AressS-Git/syspulse/pkg/platform"
 	"github.com/AressS-Git/syspulse/pkg/server"
 )
@@ -12,8 +11,6 @@ import (
 type App struct {
 	// Canal de comunicación entre código y Wails
 	ctx context.Context
-	// Base de datos que usará Wails
-	db *gorm.DB
 }
 
 func NewApp() *App {
@@ -21,42 +18,32 @@ func NewApp() *App {
 }
 
 // startup es la función que Wails ejecuta una vez al abrir una ventana
-// de ahí que se guarde la conexión a la BD y el conexto (conexión código - wails) para luego usar ambas variables cómo queramos
-func (a *App) startup(ctx context.Context) {
-    a.ctx = ctx
-    fmt.Println("INICIANDO STARTUP...")
+// Por eso se guarda la conexión a la BD y el conexto (conexión código - wails) para luego usar ambas variables cómo queramos
+func (appPointer *App) startup(ctx context.Context) {
+    appPointer.ctx = ctx
+    fmt.Println("Iniciando startup...")
 
-    // ESTA ES TU RUTA REAL (Extraída de tu log)
-    // Apunta al archivo syspulse.db que está en la carpeta superior a dashboard
-    fullPath := "/Users/sergiogomezsantos/Desktop/syspulse/syspulse.db"
-    
-    fmt.Println("Intentando conectar a:", fullPath)
-
-    conn, err := server.InitDB(fullPath)
-    if err != nil {
-        // Usamos panic para que el error sea muy visible si falla
-        panic(fmt.Sprintf("ERROR FATAL EN INITDB: %v", err))
-    }
-    
-    a.db = conn
-    fmt.Println("CONEXIÓN ÉXITOSA - ¡Base de datos cargada!")
+    // Inicializar la conexión con la BD
+    server.InitDB()
 }
 
 // GetStats es la función que React utilizará para sacar info de la BD
+// Se devuelven slices vacíos si no se consiguen sacar datos de la BD
 func (a *App) GetStats() []platform.SystemStats {
     // Si la BD no existe se informa por consola
-    if a.db == nil {
-        fmt.Println("La base de datos aún no está conectada.")
+    if server.DB == nil {
+        fmt.Println("La base de datos aún no está conectada")
         return []platform.SystemStats{}
     }
 
     var systemData []platform.SystemStats
     
     // Hacer la query en la BD
-    result := a.db.Order("id desc").Limit(20).Find(&systemData)
+    result := server.DB.Order("id desc").Limit(20).Find(&systemData)
     
     if result.Error != nil {
-        fmt.Println("Error leyendo datos:", result.Error)
+        fmt.Println("Error leyendo datos de la DB:", result.Error)
+        return []platform.SystemStats{}
     }
 
     return systemData

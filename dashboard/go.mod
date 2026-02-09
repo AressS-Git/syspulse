@@ -5,7 +5,6 @@ go 1.23.3
 require (
 	github.com/AressS-Git/syspulse v0.0.0-00010101000000-000000000000
 	github.com/wailsapp/wails/v2 v2.11.0
-	gorm.io/gorm v1.31.1
 )
 
 require (
@@ -40,6 +39,7 @@ require (
 	golang.org/x/sys v0.30.0 // indirect
 	golang.org/x/text v0.22.0 // indirect
 	gorm.io/driver/sqlite v1.6.0 // indirect
+	gorm.io/gorm v1.31.1 // indirect
 )
 
 // replace github.com/wailsapp/wails/v2 v2.11.0 => /Users/sergiogomezsantos/go/pkg/mod

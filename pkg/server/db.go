@@ -1,25 +1,44 @@
 package server
 
 import (
-    "fmt"
     "gorm.io/gorm"
     "gorm.io/driver/sqlite"
     "github.com/AressS-Git/syspulse/pkg/platform"
 )
 
-func InitDB(connectionRoute string) (*gorm.DB, error) {
-    // Se crea la conexión de gorm con la BD
-    db, err := gorm.Open(sqlite.Open(connectionRoute), &gorm.Config{})
+// Variable global que permite innteractuar con la BD desde otros paquetes (principalmente desde la app de Wails)
+var DB *gorm.DB
+
+// Mensaje de error por defecto si falla la conexión a la BD
+const conexionError string = "Error fatal, no se pudo abrir una conexión a la BD: "
+
+// ConnectDB abre el canal con la BD
+func ConnectDB() *gorm.DB {
+    dbPath, err := platform.GetBDAbsolutePath()
     if err != nil {
-        fmt.Println("Error al abrir Gorm:", err)
-        return nil, err
+        panic(conexionError + err.Error())
+    }
+    
+    // Abrir la conexión con la BD
+    dbConnexion, err := gorm.Open(sqlite.Open(dbPath), &gorm.Config{})
+    if err != nil {
+        panic(conexionError + err.Error())
+    }
+    
+    return dbConnexion // Devolver el puntero de la BD
+}
+
+// InitDB comprueba si la BD tiene las tablas necesarias para guardar los datos de los agentes
+func InitDB() {
+    // Obtener el puntero de conexión a la BD usando la función ConnectDB
+    dbConn := ConnectDB()
+
+    // Ejecutar las migraciones en base a la estrutura del struct SystemStats
+    err := dbConn.AutoMigrate(&platform.SystemStats{})
+    if err != nil {
+        panic("Fallo en la migración de la base de datos: " + err.Error())
     }
 
-    // Gorm revisa la estructura que le pases (en este caso SystemStats) y si no existe en la BD crea una tabla
-    if err := db.AutoMigrate(&platform.SystemStats{}); err != nil {
-        fmt.Println("Error en AutoMigrate:", err)
-        return nil, err
-    }
-
-    return db, nil
+    // Guardar la conexión con la BD en una variable global
+    DB = dbConn
 }

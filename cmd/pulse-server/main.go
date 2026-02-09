@@ -4,23 +4,14 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-
 	"github.com/AressS-Git/syspulse/pkg/platform"
 	"github.com/AressS-Git/syspulse/pkg/server"
-	"gorm.io/gorm"
 )
 
-// Variable dónde se guardará la conexión de Gorm a la BD
-var db *gorm.DB
 
 func main() {
-    // Crear la conexión de Gorm a la BD
-    var err error
-    db, err = server.InitDB("/Users/sergiogomezsantos/Desktop/syspulse/syspulse.db")
-    if err != nil {
-        fmt.Println("Error al conectarse a la base de datos:", err)
-        return
-    }
+    // Se inicia la conexión con la BD, si da error, el servidor se detendrá graicas a los panics de la función
+    server.InitDB()
 
     fmt.Println("Conexión a la BD establecida correctamente y tablas creadas correctamente")
 
@@ -31,7 +22,7 @@ func main() {
     fmt.Println("Servidor escuchando en http://localhost:8080/api/stats...")
 
     // Abrir el puerto y escuchar peticiones
-    err = http.ListenAndServe(":8080", nil)
+    err := http.ListenAndServe(":8080", nil)
     if err != nil {
         fmt.Println("Error al iniciar el servidor:", err)
     }
@@ -39,6 +30,9 @@ func main() {
 
 // httpHandler maneja las peticiones http que lleguen por el puerto (writer escribe y request representa la petición)
 func httpHandler(writer http.ResponseWriter, request *http.Request) {
+    // Cerrar el body de las request
+    defer request.Body.Close()
+
     if request.Method != http.MethodPost {
         http.Error(writer, "Método no permitido", http.StatusMethodNotAllowed)
         return
@@ -54,8 +48,8 @@ func httpHandler(writer http.ResponseWriter, request *http.Request) {
         return
     }
 
-    // Guardar los datos de stats en la BD
-    result := db.Create(&stats)
+    // Guardar los datos de stats en la BD, usamos la variable global del otro paquete
+    result := server.DB.Create(&stats)
     if result.Error != nil {
         http.Error(writer, "Error al guardar los datos en la BD", http.StatusInternalServerError)
     }
