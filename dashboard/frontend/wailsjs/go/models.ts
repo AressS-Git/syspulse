@@ -9,7 +9,7 @@ export namespace platform {
 	    disk: number;
 	    incoming_net_traffic: number;
 	    outbound_net_traffic: number;
-	    processes: string[];
+	    processes: string;
 	    time: number;
 	
 	    static createFrom(source: any = {}) {

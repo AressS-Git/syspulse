@@ -64,7 +64,7 @@ tbody tr:hover {
 /* Colorear columnas específicas */
 /* Hostname (Columna 2) */
 td:nth-child(2) {
-    color: #4FDB51; /* Rojo suave */
+    color: #4FDB51; /* Verde fosforito */
     font-weight: bold;
 }
 /* CPU (Columna 4) */
@@ -79,11 +79,26 @@ td:nth-child(5) {
 }
 /* Disco (Columna 6) */
 td:nth-child(6) {
-    color: #76AB80; /* Amarillo suave */
+    color: #76AB80; /* Verde suave */
     font-weight: bold;
 }
-/* Hora (Columna 7) */
+/* TRÁFICO DE RED ENTRANTE (Columna 7) */
 td:nth-child(7) {
-    color: #B186C4; /* Amarillo suave */
+    color: #89E4FA; /* Azul suave */
+    font-weight: bold;
+}
+/* TRÁFICO DE RED SALIENTE (Columna 8) */
+td:nth-child(8) {
+    color: #89E4FA; /* Azul suave */
+    font-weight: bold;
+}
+/* TOP 5 PROCESOS (Columna 9) */
+td:nth-child(9) {
+    color: #FF7AB3; /* Rosa suave */
+    font-weight: bold;
+}
+/* Hora (Columna 10) */
+td:nth-child(10) {
+    color: #B186C4; /* Morado suave */
     font-weight: bold;
 }

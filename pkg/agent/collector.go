@@ -1,15 +1,24 @@
 package agent
 
 import (
+	"fmt"
+	"sort"
+	"strings"
 	"time"
 	"github.com/AressS-Git/syspulse/pkg/platform"
 	"github.com/shirou/gopsutil/v3/cpu"
 	"github.com/shirou/gopsutil/v3/disk"
 	"github.com/shirou/gopsutil/v3/host"
 	"github.com/shirou/gopsutil/v3/mem"
-    "github.com/shirou/gopsutil/v3/net"
-    "github.com/shirou/gopsutil/v3/process"
+	"github.com/shirou/gopsutil/v3/net"
+	"github.com/shirou/gopsutil/v3/process"
 )
+
+// Estructura para guardar los procesos y trabajar con ellos
+type Process struct {
+    ProcessName string
+    CPUUsage float64
+}
 
 // GetMetrics se encargará de obtener la información necesaria de los equipos que tengan el agente instalado
 func GetMetrics() (platform.SystemStats, error) {
@@ -66,38 +75,53 @@ func GetMetrics() (platform.SystemStats, error) {
 }
 
 // GetProcesses obtiene los cinco procesos que más recursos están consumiendo en ese momento
-func GetProcesses() ([]string, error) {
-    // Slice donde se guardarán los procesos que se devolverán
-    var processesSlice []string
+func GetProcesses() (string, error) {
+    // Lista dónde guardaremos los procesos
+    var processesList []Process
+
     // Obtener el slice de procesos activos
     processes, err := process.Processes()
     if err != nil {
-        return nil, err
+        return "", err
     }
 
-    // Recorrer el slice de procesos
+    // Obtener el nombre y el uso de CPU de los procesos activos
     for _, p := range processes {
-        if len(processes) > 5 {
-            break
-        }
-        // Obtener el nombre del proceso
         name, err := p.Name()
         if err != nil {
-            return nil, err
+            continue
         }
-        // Añadir el proceso al slice que vamos a devolver
-        processesSlice = append(processesSlice, name)
+
+        cpu, err := p.CPUPercent()
+        if err != nil {
+            continue
+        }
+
+        // Guardar en la lista de procesos
+        processesList = append(processesList, Process{ProcessName: name, CPUUsage: cpu})
     }
 
-    return processesSlice, nil
+    // Ordenar la lista de procesos de mayor a menor por el uso de CPU
+    sort.Slice(processesList, func(i, j int) bool {
+        return processesList[i].CPUUsage > processesList[j].CPUUsage
+    })
+
+    var builder strings.Builder
+
+    // Construir el string con los 5 procesos que más consumen
+    for i := 0; i < 5 && i < len(processesList); i++ {
+        builder.WriteString(fmt.Sprintf("%v: %.2v%%\n", processesList[i].ProcessName, processesList[i].CPUUsage))
+    }
+
+    return builder.String(), nil
 }
 
 // Función que obtiene el tráfico de red total entrante y saliente
-func GetNetTraffic() (uint64, uint64, error) {
+func GetNetTraffic() (int64, int64, error) {
     netTraffic, err := net.IOCounters(false) // False devuelve el tráfico total, true devuelve el tráfico por cada adaptador
     if err != nil {
         return 0, 0, err
     }
     // Se devuelve el tráfico entrante y saliente
-    return netTraffic[0].BytesRecv, netTraffic[0].BytesSent, nil
+    return int64(netTraffic[0].BytesRecv), int64(netTraffic[0].BytesSent), nil
 }

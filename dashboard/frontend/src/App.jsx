@@ -32,6 +32,9 @@ function App() {
                         <th>CPU</th>
                         <th>RAM</th>
                         <th>Disco</th>
+                        <th>Incoming Red Traffic</th>
+                        <th>Outbound Red Traffic</th>
+                        <th>Top 5 Processes</th>
                         <th>Hora</th>
                     </tr>
                 </thead>
@@ -44,6 +47,9 @@ function App() {
                             <td>{item?.cpu?.toFixed(2)}%</td>
                             <td>{item?.ram?.toFixed(2)}%</td>
                             <td>{item?.disk?.toFixed(2)}%</td>
+                            <td>{item.incoming_net_traffic} KB/s</td>
+                            <td>{item.outgoing_net_traffic} KB/s</td>
+                            <td><pre>{item.processes}</pre></td>
                             <td>{item?.time ? new Date(item.time * 1000).toLocaleTimeString() : "Cargando..."}</td>
                         </tr>
                     ))}
