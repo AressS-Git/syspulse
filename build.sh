@@ -4,34 +4,38 @@
 set -e
 
 echo "--- 🛠️ Iniciando Limpieza de SysPulse ---"
-# Matar procesos antiguos para liberar los archivos y los puertos
+# Limpiamos procesos y archivos (incluyendo los nuevos)
 pkill sys-server || true
 pkill sys-agent || true
-rm -f sys-server sys-agent
+rm -f sys-server sys-agent sys-agent-linux sys-agent-win.exe
 
-echo "--- Compilando Servidor ---"
-# Compilamos el servidor y verificamos que el archivo existe
+echo "--- 🍎 Compilando para macOS (Originales) ---"
+# Servidor para Mac
 go build -o sys-server ./cmd/pulse-server/main.go
-if [ -f "./sys-server" ]; then
-    echo "Servidor compilado con éxito."
-else
-    echo "Error: No se pudo generar el binario del servidor."
-    exit 1
-fi
-
-echo "--- Compilando Agente ---"
+# Agente para Mac (el nombre que usabas siempre)
 go build -o sys-agent ./cmd/pulse-agent/main.go
-if [ -f "./sys-agent" ]; then
-    echo "Agente compilado con éxito."
+
+if [ -f "./sys-server" ] && [ -f "./sys-agent" ]; then
+    echo "Binarios de macOS compilados con éxito."
 else
-    echo "Error: No se pudo generar el binario del agente."
+    echo "Error: No se pudieron generar los binarios de macOS."
     exit 1
 fi
 
-echo "--- Compilando Dashboard (Wails) ---"
-# Entramos a la carpeta, construimos y volvemos a la raíz
+echo "--- 🐧 Compilando Agente para LINUX ---"
+GOOS=linux GOARCH=amd64 go build -o sys-agent-linux ./cmd/pulse-agent/main.go
+
+echo "--- 🪟 Compilando Agente para WINDOWS ---"
+GOOS=windows GOARCH=amd64 go build -o sys-agent-win.exe ./cmd/pulse-agent/main.go
+
+echo "--- 📊 Compilando Dashboard (Wails) ---"
 cd dashboard
 wails build
 cd ..
 
-echo "--- Todo el sistema ha sido reconstruido con éxito ---"
+echo "--- ✅ Todo el sistema ha sido reconstruido ---"
+echo "Archivos generados en la raíz:"
+echo "  - sys-server          (Mac)"
+echo "  - sys-agent           (Mac)"
+echo "  - sys-agent-linux     (Linux)"
+echo "  - sys-agent-win.exe   (Windows)"
