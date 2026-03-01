@@ -9,7 +9,7 @@ import (
 
 func main() {
     // Definimos la URL donde está escuchando nuestro servidor
-    serverURL := "http://localhost:8080/api/stats"
+    serverURL := "http://192.168.1.16:8080/api/stats"
 
     fmt.Println("Iniciando Agente SysPulse...")
 

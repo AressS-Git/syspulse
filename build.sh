@@ -4,15 +4,15 @@
 set -e
 
 echo "--- 🛠️ Iniciando Limpieza de SysPulse ---"
-# Limpiamos procesos y archivos (incluyendo los nuevos)
+# Limpiamos procesos y archivos
 pkill sys-server || true
 pkill sys-agent || true
-rm -f sys-server sys-agent sys-agent-linux sys-agent-win.exe
+rm -f sys-server sys-agent sys-agent-linux
 
 echo "--- 🍎 Compilando para macOS ---"
 # Servidor para Mac
 go build -o sys-server ./cmd/pulse-server/main.go
-# Agente para Mac (el nombre que usabas siempre)
+# Agente para Mac
 go build -o sys-agent ./cmd/pulse-agent/main.go
 
 if [ -f "./sys-server" ] && [ -f "./sys-agent" ]; then
@@ -22,8 +22,8 @@ else
     exit 1
 fi
 
-echo "--- 🐧 Compilando Agente para LINUX ---"
-GOOS=linux GOARCH=amd64 go build -o sys-agent-linux ./cmd/pulse-agent/main.go
+echo "--- 🐧 Compilando Agente para LINUX ARM64 ---"
+GOOS=linux GOARCH=arm64 go build -o sys-agent-linux-arm64 ./cmd/pulse-agent/main.go
 
 
 echo "--- 📊 Compilando Dashboard (Wails) ---"
