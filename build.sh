@@ -9,7 +9,7 @@ pkill sys-server || true
 pkill sys-agent || true
 rm -f sys-server sys-agent sys-agent-linux sys-agent-win.exe
 
-echo "--- 🍎 Compilando para macOS (Originales) ---"
+echo "--- 🍎 Compilando para macOS ---"
 # Servidor para Mac
 go build -o sys-server ./cmd/pulse-server/main.go
 # Agente para Mac (el nombre que usabas siempre)
@@ -25,8 +25,6 @@ fi
 echo "--- 🐧 Compilando Agente para LINUX ---"
 GOOS=linux GOARCH=amd64 go build -o sys-agent-linux ./cmd/pulse-agent/main.go
 
-echo "--- 🪟 Compilando Agente para WINDOWS ---"
-GOOS=windows GOARCH=amd64 go build -o sys-agent-win.exe ./cmd/pulse-agent/main.go
 
 echo "--- 📊 Compilando Dashboard (Wails) ---"
 cd dashboard
@@ -38,4 +36,3 @@ echo "Archivos generados en la raíz:"
 echo "  - sys-server          (Mac)"
 echo "  - sys-agent           (Mac)"
 echo "  - sys-agent-linux     (Linux)"
-echo "  - sys-agent-win.exe   (Windows)"

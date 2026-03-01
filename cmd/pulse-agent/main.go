@@ -33,7 +33,7 @@ func main() {
             fmt.Printf("Métricas enviadas al servidor -> CPU = %.1f%%, RAM = %.1f%%", stats.CpuUsage, stats.RamUsage) // Se muestran sólo el primer decimal
         }
 
-        // El agente enviará datos cada 5 segundos para no saturar el servidor
-        time.Sleep(5 * time.Second)
+        // El agente enviará datos cada 10 segundos para no saturar el servidor
+        time.Sleep(10 * time.Second)
     }
 }

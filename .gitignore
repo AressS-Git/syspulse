@@ -4,9 +4,7 @@ syspulse.db
 # Archivos de sistema
 .DS_Store
 
-# Binarios y carpetas de build
-build/
-bin/
+# Binarios
 *.exe
 
 # Los build
