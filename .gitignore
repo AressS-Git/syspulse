@@ -12,3 +12,4 @@ bin/
 # Los build
 sys-agent
 sys-server
+sys-agent-linux
