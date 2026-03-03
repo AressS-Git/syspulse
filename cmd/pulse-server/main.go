@@ -10,7 +10,7 @@ import (
 
 
 func main() {
-    // Se inicia la conexión con la BD, si da error, el servidor se detendrá graicas a los panics de la función
+    // Se inicia la conexión con la BD, si da error, el servidor se detendrá gracias a los panics de la función
     server.InitDB()
 
     fmt.Println("Conexión a la BD establecida correctamente y tablas creadas correctamente")
@@ -52,8 +52,14 @@ func httpHandler(writer http.ResponseWriter, request *http.Request) {
     result := server.DB.Create(&stats)
     if result.Error != nil {
         http.Error(writer, "Error al guardar los datos en la BD", http.StatusInternalServerError)
+        return
     }
-
-    fmt.Println("Datos recibidos y guardados en la BD:", stats.ID, stats)
+    
+    fmt.Println("Datos guardados en la BD, creando alerta en segundo plano...")
+    
+    // Goroutine para que la alerta se vaya creando de fondo y se pueda ir devolviendo la respuesta sin tener que esperar a que la BD responda al crear la alerta
+    // La función CreateAlert se encargará de crear la alerta en base a los umbrales establecidos en alerts.go
+    go server.CreateAlert(stats)
+    
     writer.WriteHeader(http.StatusOK)
 }
