@@ -15,7 +15,7 @@ type SystemStats struct {
     DeviceID uint `json:"device_id" gorm:"index"` // Clave foránea al Device
     MacAddress string `json:"mac_address"` // Dirección MAC del equipo
     Hostname string `json:"hostname"` // Nombre del equipo
-    Platform string `json:"platform"` // Plataforma del equipo (Windows o Linux)
+    Platform string `json:"platform"` // Plataforma del equipo
     CpuUsage float64 `json:"cpu"` // Uso de la CPU del equipo
     RamUsage float64  `json:"ram"` // Uso de la RAM del equipo
     DiskUsage float64 `json:"disk"` // Uso del disco del equipo
@@ -43,8 +43,8 @@ type Alert struct {
 type Device struct {
     ID uint `json:"id" gorm:"primaryKey"`
     MacAddress string `json:"mac_address" gorm:"uniqueIndex"` // Dirección MAC única para identificar al equipo
-    Hostname string `json:"hostname" gorm:"uniqueIndex"` // Único para evitar duplicados
-    Platform string `json:"platform"` // Movido aquí: Windows, Linux, etc.
+    Hostname string `json:"hostname"` // Único para evitar duplicados
+    Platform string `json:"platform"` // Plataforma del equipo
     
     // Relaciones 1:N con las estadísticas y las alertas
     SystemStats []SystemStats `json:"system_stats" gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
