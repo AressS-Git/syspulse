@@ -14,21 +14,21 @@ type Threshold struct {
 
 // Umbrales ordenados de más grave (1) a menos grave (3)
 var cpuThresholds = []Threshold{
-    {95.0, 1},
-    {90.0, 2},
-    {80.0, 3},
+    {100.0, 1},
+    {75.0, 2},
+    {50.0, 3},
 }
 
 var ramThresholds = []Threshold{
     {100.0, 1},
-    {95.0, 2},
-    {85.0, 3},
+    {80.0, 2},
+    {60.0, 3},
 }
 
 var diskThresholds = []Threshold{
     {100.0, 1},
-    {85.0, 2},
-    {70.0, 3},
+    {75.0, 2},
+    {50.0, 3},
 }
 
 // CreateAlert llamará a la función ChechkStats pasándola los distintos parámetos que debe revisar y los umbrales que indican si hay que crear una laerta o no es necesario
@@ -44,6 +44,7 @@ func CheckStats(stats platform.SystemStats, value float64, thresholds []Threshol
         // Si el valor recogido por el agente supera el umbral se creará una alerta del tipo concreto en cada caso
         if value > threshold.Value {
             alert := platform.Alert{
+                DeviceID:      stats.DeviceID,
                 Time:          time.Now().Unix(),
                 Hostname:      stats.Hostname,
                 Type:          alertType,

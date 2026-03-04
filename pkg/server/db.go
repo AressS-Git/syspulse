@@ -34,7 +34,7 @@ func InitDB() {
     dbConn := ConnectDB()
 
     // Ejecutar las migraciones en base a la estrutura del struct SystemStats
-    err := dbConn.AutoMigrate(&platform.SystemStats{}, &platform.Alert{})
+    err := dbConn.AutoMigrate(&platform.Device{}, &platform.SystemStats{}, &platform.Alert{})
     if err != nil {
         panic("Fallo en la migración de la base de datos: " + err.Error())
     }

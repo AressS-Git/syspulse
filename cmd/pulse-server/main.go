@@ -1,11 +1,11 @@
 package main
 
 import (
-	"encoding/json"
-	"fmt"
-	"net/http"
-	"github.com/AressS-Git/syspulse/pkg/platform"
-	"github.com/AressS-Git/syspulse/pkg/server"
+    "encoding/json"
+    "fmt"
+    "net/http"
+    "github.com/AressS-Git/syspulse/pkg/platform"
+    "github.com/AressS-Git/syspulse/pkg/server"
 )
 
 
@@ -47,6 +47,22 @@ func httpHandler(writer http.ResponseWriter, request *http.Request) {
         http.Error(writer, "JSON no válido", http.StatusBadRequest)
         return
     }
+
+    // Buscar el dispositivo por su MAC o crearlo si es la primera vez que se conecta
+    var device platform.Device
+    errDevice := server.DB.Where(platform.Device{MacAddress: stats.MacAddress}).FirstOrCreate(&device, platform.Device{
+        MacAddress: stats.MacAddress,
+        Hostname:   stats.Hostname,
+        Platform:   stats.Platform,
+    }).Error
+
+    if errDevice != nil {
+        http.Error(writer, "Error al gestionar el dispositivo en la BD", http.StatusInternalServerError)
+        return
+    }
+
+    // Asignar el ID del dispositivo a las estadísticas generadas
+    stats.DeviceID = device.ID
 
     // Guardar los datos de stats en la BD, usamos la variable global del otro paquete
     result := server.DB.Create(&stats)

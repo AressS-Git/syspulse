@@ -1,17 +1,17 @@
 package agent
 
 import (
-	"fmt"
-	"sort"
-	"strings"
-	"time"
-	"github.com/AressS-Git/syspulse/pkg/platform"
-	"github.com/shirou/gopsutil/v3/cpu"
-	"github.com/shirou/gopsutil/v3/disk"
-	"github.com/shirou/gopsutil/v3/host"
-	"github.com/shirou/gopsutil/v3/mem"
-	"github.com/shirou/gopsutil/v3/net"
-	"github.com/shirou/gopsutil/v3/process"
+    "fmt"
+    "sort"
+    "strings"
+    "time"
+    "github.com/AressS-Git/syspulse/pkg/platform"
+    "github.com/shirou/gopsutil/v3/cpu"
+    "github.com/shirou/gopsutil/v3/disk"
+    "github.com/shirou/gopsutil/v3/host"
+    "github.com/shirou/gopsutil/v3/mem"
+    "github.com/shirou/gopsutil/v3/net"
+    "github.com/shirou/gopsutil/v3/process"
 )
 
 // Estructura para guardar los procesos y trabajar con ellos
@@ -59,8 +59,15 @@ func GetMetrics() (platform.SystemStats, error) {
         return platform.SystemStats{}, err
     }
 
+    // Obtener la dirección MAC del equipo
+    macAddress, err := GetMacAddress()
+    if err != nil {
+        return platform.SystemStats{}, err
+    }
+
     // Rellenar el struct SystemStats con los datos obtenidos
     var stats platform.SystemStats
+    stats.MacAddress = macAddress
     stats.Hostname = hostInfo.Hostname
     stats.Platform = hostInfo.Platform
     stats.CpuUsage = cpuUsagePercent[0]
@@ -124,4 +131,21 @@ func GetNetTraffic() (int64, int64, error) {
     }
     // Se devuelve el tráfico entrante y saliente
     return int64(netTraffic[0].BytesRecv), int64(netTraffic[0].BytesSent), nil
+}
+
+// Función que obtiene la dirección MAC principal del equipo
+func GetMacAddress() (string, error) {
+    interfaces, err := net.Interfaces()
+    if err != nil {
+        return "", err
+    }
+    
+    // Busca la primera interfaz que tenga una dirección MAC válida
+    for _, inter := range interfaces {
+        if inter.HardwareAddr != "" {
+            return inter.HardwareAddr, nil
+        }
+    }
+    
+    return "unknown_mac", nil
 }
