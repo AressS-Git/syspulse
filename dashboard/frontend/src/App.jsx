@@ -119,7 +119,7 @@ function App() {
                                     <td>{item?.ram?.toFixed(2)}%</td>
                                     <td>{item?.disk?.toFixed(2)}%</td>
                                     <td>{item.incoming_net_traffic} KB/s</td>
-                                    <td>{item.outgoing_net_traffic} KB/s</td>
+                                    <td>{item.outbound_net_traffic} KB/s</td>
                                     <td>{item?.time ? new Date(item.time * 1000).toLocaleTimeString() : "Cargando..."}</td>
                                 </tr>
                             ))}
