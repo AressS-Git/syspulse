@@ -79,11 +79,11 @@ function App() {
                                     <td>{device.platform}</td>
                                     <td>
                                         <button onClick={() => showStats(device.id)} style={{ marginRight: '10px' }}>
-                                            Ver Estadísticas
+                                            Estadísticas
                                         </button>
                                         {/* Nuevo botón para las alertas */}
                                         <button onClick={() => showAlerts(device.id)}>
-                                            Ver Alertas
+                                            Alertas
                                         </button>
                                     </td>
                                 </tr>

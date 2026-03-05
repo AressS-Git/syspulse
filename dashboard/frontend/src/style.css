@@ -21,16 +21,39 @@ body {
 }
 
 #app {
-    height: 100vh;
+    min-height: 100vh;
     text-align: center;
 }
 
-/* --- Estilos para los botones de navegación entre vistas --- */
+/* Sección de contenedor y tabla */
+.container {
+    width: 95%; /* Ensanchado del contenedor principal */
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+table {
+    width: 100%; /* Forzar a la tabla a ocupar todo el contenedor */
+    border-collapse: collapse;
+    margin-top: 20px;
+    background-color: rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+th, td {
+    padding: 15px 10px;
+    border-bottom: 1px solid rgba(76, 161, 175, 0.3);
+}
+
+/* Sección de botones */
 button {
-    background-color: #2c3e50; /* Color oscuro que pega con tu fondo */
+    background-color: #2c3e50; 
     color: white;
-    border: 1px solid #4ca1af; /* Un borde sutil */
-    padding: 8px 16px;
+    border: 1px solid #4ca1af; 
+    padding: 10px 5px; /* Padding ajustado de forma uniforme */
     border-radius: 4px;
     cursor: pointer;
     font-family: inherit;
@@ -38,5 +61,29 @@ button {
 }
 
 button:hover {
-    background-color: #4ca1af; /* Cambia de color al pasar el ratón */
+    background-color: #4ca1af; 
+}
+
+/* Estilos de botones de acción */
+/* Contenedor para celdas de acciones de tabla */
+.actions-container {
+    display: flex;
+    gap: 10px;
+    width: 100%;
+}
+
+/* Botones dentro del contenedor de acciones */
+.actions-container button {
+    flex: 1;
+    white-space: nowrap;
+}
+
+/* Estilo específico para el botón de alertas */
+.btn-alert {
+    background-color: #5a2a2a;
+    border-color: #e74c3c;
+}
+
+.btn-alert:hover {
+    background-color: #e74c3c; /* Rojo brillante en estado hover */
 }
