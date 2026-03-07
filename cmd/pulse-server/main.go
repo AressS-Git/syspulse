@@ -10,6 +10,9 @@ import (
 
 
 func main() {
+    // Cargar la configuración de las alertas desde el archivo alertsparameters.json
+    server.CreateThresholds()
+
     // Se inicia la conexión con la BD, si da error, el servidor se detendrá gracias a los panics de la función
     server.InitDB()
 

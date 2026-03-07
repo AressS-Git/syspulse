@@ -155,8 +155,8 @@ function App() {
                                         {/* Simple mapeo visual de la severidad */}
                                         {alert.severity === 1 ? 'Crítica' : alert.severity === 2 ? 'Advertencia' : 'Info'}
                                     </td>
-                                    <td>{alert?.value?.toFixed(2)}</td>
-                                    <td>{alert?.threshold?.toFixed(2)}</td>
+                                    <td>{alert?.value?.toFixed(2)}%</td>
+                                    <td>{alert?.threshold?.toFixed(2)}%</td>
                                     <td>{alert?.time ? new Date(alert.time * 1000).toLocaleTimeString() : "Cargando..."}</td>
                                 </tr>
                             ))}

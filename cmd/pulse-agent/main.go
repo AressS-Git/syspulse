@@ -19,8 +19,8 @@ func main() {
         stats, err := agent.GetMetrics()
         if err != nil {
             log.Println("Error al recolectar métricas:", err)
-            // Recojer métricas cada 5 segundos
-            time.Sleep(5 * time.Second)
+            // Recojer métricas cada 10 segundos
+            time.Sleep(10 * time.Second)
             continue
         }
 
