@@ -4,10 +4,13 @@ import (
     "encoding/json"
     "fmt"
     "net/http"
+    "time"
     "github.com/AressS-Git/syspulse/pkg/platform"
     "github.com/AressS-Git/syspulse/pkg/server"
 )
 
+// Variable para acceder al notificador desde el handler
+var emailNotifier *server.EmailNotifier
 
 func main() {
     // Cargar la configuración de las alertas desde el archivo alertsparameters.json
@@ -18,8 +21,24 @@ func main() {
 
     fmt.Println("Conexión a la BD establecida correctamente y tablas creadas correctamente")
 
+    // Iniciar el notficador
+    var errNotifier error
+    // Usar la función LoadNotifierConfig para cargar la configuración del servidor de correo desde el JSON
+    emailNotifier, errNotifier = server.LoadNotifierConfig("pkg/server/notifierparameters.json")
+    if errNotifier != nil {
+        fmt.Println("Error al cargar la configuración del correo:", errNotifier)
+    } else {
+        fmt.Println("Notificador de correo configurado correctamente")
+        
+        // Iniciar el envío automático de reportes en segundo plano cada 6 horas
+        go server.StartPeriodicReport(emailNotifier, 6*time.Hour)
+    }
+
     // Las peticiones http entrantes que accedan a dicha ruta se manejarán con el handler
     http.HandleFunc("/api/stats", httpHandler)
+
+    // Ruta para disparar el envío del correo manualmente
+    http.HandleFunc("/api/report", reportHandler)
 
     // Imprimir antes de que el servidor bloquee la ejecución
     fmt.Println("Servidor escuchando en http://localhost:8080/api/stats...")
@@ -81,4 +100,48 @@ func httpHandler(writer http.ResponseWriter, request *http.Request) {
     go server.CreateAlert(stats)
     
     writer.WriteHeader(http.StatusOK)
+}
+
+// reportHandler extrae alertas de la BD y las envía por correo
+func reportHandler(writer http.ResponseWriter, request *http.Request) {
+    // Verificar que el notificador se cargó correctamente al inicio
+    if emailNotifier == nil {
+        http.Error(writer, "El servicio de correo no está configurado", http.StatusInternalServerError)
+        return
+    }
+
+    var alertas []platform.Alert
+    
+    // Extraer las últimas 20 alertas de la base de datos ordenadas por fecha descendente
+    if err := server.DB.Order("time desc").Limit(20).Find(&alertas).Error; err != nil {
+        http.Error(writer, "Error al extraer las alertas de la base de datos", http.StatusInternalServerError)
+        return
+    }
+
+    // Construir el cuerpo del correo
+    body := "Reporte de las últimas alertas del sistema (Max 20):\n\n"
+    if len(alertas) == 0 {
+        body += "Actualmente no hay ninguna alerta registrada en el sistema.\n"
+    } else {
+        for _, alerta := range alertas {
+            // Se formatea la información de cada alerta en una línea
+            body += fmt.Sprintf("- Host: %v | Tipo: %v | Sev: %v | Valor: %.2v | Umbral: %.2v\n",
+                alerta.Hostname, alerta.Type, alerta.Severity, alerta.Value, alerta.Threshold)
+        }
+    }
+
+    // Enviar el correo en una goroutine mediante una función anónima para no bloquear la respuesta HTTP
+    go func() {
+        err := emailNotifier.Notify("Reporte SysPulse: Últimas Alertas", body)
+        if err != nil {
+            fmt.Println("Error al enviar el correo de reporte:", err)
+        } else {
+            fmt.Println("Correo de reporte de alertas enviado con éxito a", emailNotifier.To)
+        }
+    }()
+
+    writer.WriteHeader(http.StatusOK)
+    if _, err := writer.Write([]byte("Solicitud recibida. Procesando el envío del correo en segundo plano...")); err != nil {
+        fmt.Println("Error al enviar la respuesta al cliente:", err)
+    }
 }
