@@ -57,6 +57,10 @@ func (notifier *EmailNotifier) Notify(message string, body string) error {
     header += fmt.Sprintf("To: %v\r\n", strings.Join(notifier.To, ", "))
     header += fmt.Sprintf("Subject: %v\r\n", message)
 
+    // Añadir cabeceras HTML para que el mensaje tenga formato HTML y así sea más atractivo
+    header += "MIME-version: 1.0;\r\n"
+    header += "Content-Type: text/html; charset=\"UTF-8\";\r\n"
+
     // Separar cabecera de cuerpo (línea en blanco)
     header += "\r\n"
 
@@ -94,15 +98,74 @@ func StartPeriodicReport(notifier *EmailNotifier, interval time.Duration) {
             continue
         }
 
-        body := "Reporte Automático de Alertas (Max 20):\n\n"
+        // Inicio del cuerpo HTML
+        body := `
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <style>
+                table { width: 100%; border-collapse: collapse; font-family: Arial, sans-serif; }
+                th, td { border: 1px solid #dddddd; text-align: left; padding: 8px; font-size: 14px; }
+                th { background-color: #2c3e50; color: white; }
+                tr:nth-child(even) { background-color: #f2f2f2; }
+                .high-severity { color: #e74c3c; font-weight: bold; }
+            </style>
+        </head>
+        <body>
+            <h2>Reporte Automático de Alertas SysPulse</h2>
+        `
+
         if len(alertas) == 0 {
-            body += "Actualmente no hay ninguna alerta registrada en el sistema.\n"
+            body += "<p>Actualmente no hay ninguna alerta registrada en el sistema.</p>"
         } else {
+            // Crear los encabezados de la tabla
+            body += `
+            <table>
+              <tr>
+                <th>Host</th>
+                <th>Tipo</th>
+                <th>Severidad</th>
+                <th>Valor</th>
+                <th>Umbral</th>
+              </tr>
+            `
+            // Llenar la tabla con las alertas
             for _, alerta := range alertas {
-                body += fmt.Sprintf("- Host: %v | Tipo: %v | Sev: %v | Valor: %.2v | Umbral: %.2v\n",
-                    alerta.Hostname, alerta.Type, alerta.Severity, alerta.Value, alerta.Threshold)
+                
+                // Pasar el campo serverity uint8 a texto y asignar un estilo a cada tipo de severity
+                var sevLabel string
+                var sevStyle string
+
+                // Cada severity 
+                switch alerta.Severity {
+                case 1:
+                    sevLabel = "Info"
+                    sevStyle = ` style="color: #27ae60;"` // Verde
+                case 2:
+                    sevLabel = "Warning"
+                    sevStyle = ` style="color: #f39c12; font-weight: bold;"` // Naranja
+                case 3:
+                    sevLabel = "Severe"
+                    sevStyle = ` class="high-severity"` // Rojo
+                default:
+                    sevLabel = fmt.Sprintf("Desconocida (%d)", alerta.Severity)
+                }
+
+                // Añadir los valores (incluido sevLabel y sevStyle)
+                body += fmt.Sprintf(`
+                <tr>
+                    <td>%v</td>
+                    <td>%v</td>
+                    <td%v>%v</td>
+                    <td>%.2f</td>
+                    <td>%.2f</td>
+                </tr>`, 
+                alerta.Hostname, alerta.Type, sevStyle, sevLabel, alerta.Value, alerta.Threshold)
             }
+            body += "</table>" // Cerrar la tabla
         }
+        
+        body += "</body></html>" // Cerrar el cuerpo HTML
 
         err := notifier.Notify("Reporte SysPulse: Alertas Periódicas", body)
         if err != nil {
