@@ -138,14 +138,14 @@ func StartPeriodicReport(notifier *EmailNotifier, interval time.Duration) {
 
                 // Cada severity 
                 switch alerta.Severity {
-                case 1:
+                case 3:
                     sevLabel = "Info"
                     sevStyle = ` style="color: #27ae60;"` // Verde
                 case 2:
                     sevLabel = "Warning"
                     sevStyle = ` style="color: #f39c12; font-weight: bold;"` // Naranja
-                case 3:
-                    sevLabel = "Severe"
+                case 1:
+                    sevLabel = "Critical"
                     sevStyle = ` class="high-severity"` // Rojo
                 default:
                     sevLabel = fmt.Sprintf("Desconocida (%d)", alerta.Severity)
