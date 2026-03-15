@@ -1,13 +1,7 @@
-# Base de datos
-syspulse.db
-
-# Archivos de sistema
-.DS_Store
-
 # Binarios
 *.exe
 
 # Los build
 sys-agent
 sys-server
-sys-agent-linux
+sys-agent-linux-arm64
