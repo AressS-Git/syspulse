@@ -1,5 +1,6 @@
 # Binarios
 *.exe
+*.sh
 
 # Los build
 sys-agent
