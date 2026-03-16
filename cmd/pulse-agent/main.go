@@ -5,12 +5,14 @@ import (
 	"log"
 	"time"
 	"github.com/AressS-Git/syspulse/pkg/agent"
+    "flag"
 )
 
 func main() {
     // Definimos la URL donde está escuchando nuestro servidor
-    serverURL := "http://192.168.1.14:8080/api/stats"
-
+    serverURL := flag.String("url", "http://Macbook-Air-de-Sergio.local:8080/api/stats", "Descripción...")
+    flag.Parse()
+    
     fmt.Println("Iniciando Agente SysPulse...")
 
     // Bucle infinito para que el agente envíe estadísticas sin parar
@@ -25,7 +27,7 @@ func main() {
         }
 
         // Enviar las estadísticas al servidor mediante la función SendMetrics del archivo sender.go
-        err = agent.SendMetrics(serverURL, stats)
+        err = agent.SendMetrics(*serverURL, stats)
         if err != nil {
             log.Println("Error al enviar métricas al servidor:", err)
         } else {
