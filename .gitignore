@@ -3,3 +3,5 @@
 
 #JSONS
 *.json
+
+.DS_store
