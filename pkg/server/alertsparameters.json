@@ -1,13 +1,13 @@
 {
   "cpu_thresholds": [
     { "value": 100.0, "severity": 1 },
-    { "value": 50.0, "severity": 2 },
-    { "value": 5.0, "severity": 3 }
+    { "value": 850.0, "severity": 2 },
+    { "value": 70.0, "severity": 3 }
   ],
   "ram_thresholds": [
     { "value": 100.0, "severity": 1 },
-    { "value": 80.0, "severity": 2 },
-    { "value": 50.0, "severity": 3 }
+    { "value": 90.0, "severity": 2 },
+    { "value": 80.0, "severity": 3 }
   ],
   "disk_thresholds": [
     { "value": 100.0, "severity": 1 },
