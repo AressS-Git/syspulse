@@ -1,8 +1,2 @@
 # Binarios
 *.exe
-*.sh
-
-# Los build
-sys-agent
-sys-server
-sys-agent-linux-arm64
