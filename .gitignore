@@ -1,2 +1,5 @@
 # Binarios
 *.exe
+
+#JSONS
+*.json
