@@ -102,3 +102,62 @@ td:nth-child(10) {
     color: #B186C4; /* Morado suave */
     font-weight: bold;
 }
+
+/* Estilo para todos los botones de la app */
+button {
+    background-color: #00ADD8;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    font-family: inherit;
+    transition: background-color 0.2s, transform 0.1s;
+}
+
+button:hover {
+    background-color: #61dafb;
+    transform: scale(1.05);
+}
+
+button:active {
+    transform: scale(0.95);
+}
+
+/* Contenedor oscuro para las gráficas, igual que la tabla */
+.graph-wrapper {
+    width: 95%;
+    background-color: #20232a; 
+    border-radius: 8px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+    padding: 20px;
+    margin-bottom: 40px;
+    box-sizing: border-box; /* Evita que el padding rompa el 95% de ancho */
+}
+
+/* Título interior de cada gráfica */
+.graph-wrapper h3 {
+    color: #61dafb;
+    margin-top: 0;
+    margin-bottom: 20px;
+    text-align: left;
+    border-bottom: 1px solid #363b45;
+    padding-bottom: 10px;
+}
+
+/* Forzar color claro en los textos de Recharts (Ejes X e Y) */
+.recharts-text {
+    fill: #A0AABF; 
+}
+
+/* Forzar tema oscuro en el popup (Tooltip) cuando pasas el ratón por la gráfica */
+.recharts-default-tooltip {
+    background-color: #282c34 !important;
+    border: 1px solid #363b45 !important;
+    border-radius: 4px;
+}
+
+.recharts-tooltip-item {
+    color: #fff !important;
+}

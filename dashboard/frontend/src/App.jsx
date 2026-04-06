@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import './App.css';
 // Importar las funiones de app.go para obtener los datos desde Wails
 import { GetStats, GetDevices, GetAlerts } from "../wailsjs/go/main/App";
+// Imports para las gráficas utilizando Recharts
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
 function App() {
     // Estados para almacenar los datos
@@ -20,7 +22,8 @@ function App() {
                 GetDevices().then((result) => {
                     if (result) setDevices(result);
                 });
-            } else if (view === 'stats' && selectedDeviceId !== null) {
+            // Añadimos 'graphs' a la condición para que siga actualizando los datos en segundo plano
+            } else if ((view === 'stats' || view === 'graphs') && selectedDeviceId !== null) {
                 GetStats(selectedDeviceId).then((result) => {
                     if (result) setStats(result);
                 });
@@ -48,17 +51,32 @@ function App() {
         setView('alerts');
     };
 
+    // Nueva función para mostrar la vista de gráficas
+    const showGraphs = (id) => {
+        setSelectedDeviceId(id);
+        setView('graphs');
+    };
+
     const showDevices = () => {
         setSelectedDeviceId(null);
         setView('devices');
     };
 
+    // Preparamos los datos para las gráficas
+    // Clonamos el array (con [...stats]) y le damos la vuelta para que el orden temporal vaya de izquierda a derecha.
+    // También formateamos la hora para que el Eje X se lea bien.
+    const graphData = [...stats].reverse().map(item => ({
+        ...item,
+        formattedTime: item.time ? new Date(item.time * 1000).toLocaleTimeString() : ""
+    }));
+
     return (
         <div className="container">
-            <h1>SYSTEM PULSE MONITOR</h1>
+            <h1>SysPulse - System Monitor</h1>
+            
             {/* Tabla para mostrar los devices/dispositivos */}
             {view === 'devices' && (
-                <div>
+                <div style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                     <h2>Equipos Detectados</h2>
                     <table>
                         <thead>
@@ -82,8 +100,12 @@ function App() {
                                             Estadísticas
                                         </button>
                                         {/* Nuevo botón para las alertas */}
-                                        <button onClick={() => showAlerts(device.id)}>
+                                        <button onClick={() => showAlerts(device.id)} style={{ marginRight: '10px' }}>
                                             Alertas
+                                        </button>
+                                        {/* Nuevo botón para abrir la vista de gráficas */}
+                                        <button onClick={() => showGraphs(device.id)}>
+                                            Gráficas
                                         </button>
                                     </td>
                                 </tr>
@@ -92,10 +114,11 @@ function App() {
                     </table>
                 </div>
             )}
+
             {/* Tabla para mostrar las estadísticas */}
             {view === 'stats' && (
-                <div>
-                    <button onClick={showDevices} style={{ marginBottom: '15px' }}>
+                <div style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                    <button onClick={showDevices} style={{ marginBottom: '15px', alignSelf: 'flex-start', marginLeft: '2.5%' }}>
                         &larr; Volver a Equipos
                     </button>
                     <h2>Estadísticas en Vivo</h2>
@@ -130,8 +153,8 @@ function App() {
 
             {/* Tabla para mostrar las alertas */}
             {view === 'alerts' && (
-                <div>
-                    <button onClick={showDevices} style={{ marginBottom: '15px' }}>
+                <div style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                    <button onClick={showDevices} style={{ marginBottom: '15px', alignSelf: 'flex-start', marginLeft: '2.5%' }}>
                         &larr; Volver a Equipos
                     </button>
                     <h2>Historial de Alertas</h2>
@@ -162,6 +185,52 @@ function App() {
                             ))}
                         </tbody>
                     </table>
+                </div>
+            )}
+
+            {/* Vista para mostrar las gráficas */}
+            {view === 'graphs' && (
+                <div style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                    <button onClick={showDevices} style={{ marginBottom: '25px', alignSelf: 'flex-start', marginLeft: '2.5%' }}>
+                        &larr; Volver a Equipos
+                    </button>
+                    <h2 style={{ alignSelf: 'flex-start', marginLeft: '2.5%', color: '#00ADD8' }}>Monitorización Gráfica</h2>
+
+                    {/* Gráfica de Uso de Recursos (CPU, RAM, Disco) */}
+                    <div className="graph-wrapper">
+                        <h3>Rendimiento del Sistema (%)</h3>
+                        <ResponsiveContainer width="100%" height={300}>
+                            <LineChart data={graphData}>
+                                <CartesianGrid strokeDasharray="3 3" stroke="#363b45" />
+                                <XAxis dataKey="formattedTime" stroke="#A0AABF" />
+                                {/* Forzamos el eje Y de 0 a 100 para porcentajes */}
+                                <YAxis domain={[0, 100]} stroke="#A0AABF" />
+                                <Tooltip />
+                                <Legend />
+                                {/* Colores basados en tu CSS: Rojo para CPU, Amarillo para RAM, Verde para Disco */}
+                                <Line type="monotone" dataKey="cpu" stroke="#ff6b6b" name="CPU Usage" strokeWidth={2} dot={false} activeDot={{ r: 8 }} />
+                                <Line type="monotone" dataKey="ram" stroke="#feca57" name="RAM Usage" strokeWidth={2} dot={false} />
+                                <Line type="monotone" dataKey="disk" stroke="#76AB80" name="Disk Usage" strokeWidth={2} dot={false} />
+                            </LineChart>
+                        </ResponsiveContainer>
+                    </div>
+
+                    {/* Gráfica de Tráfico de Red */}
+                    <div className="graph-wrapper">
+                        <h3>Tráfico de Red (KB/s)</h3>
+                        <ResponsiveContainer width="100%" height={300}>
+                            <LineChart data={graphData}>
+                                <CartesianGrid strokeDasharray="3 3" stroke="#363b45" />
+                                <XAxis dataKey="formattedTime" stroke="#A0AABF" />
+                                <YAxis stroke="#A0AABF" />
+                                <Tooltip />
+                                <Legend />
+                                {/* Colores basados en tu CSS: Tonos de azul para la red */}
+                                <Line type="monotone" dataKey="incoming_net_traffic" stroke="#89E4FA" name="Incoming Traffic" strokeWidth={2} dot={false} />
+                                <Line type="monotone" dataKey="outbound_net_traffic" stroke="#00ADD8" name="Outbound Traffic" strokeWidth={2} dot={false} />
+                            </LineChart>
+                        </ResponsiveContainer>
+                    </div>
                 </div>
             )}
         </div>

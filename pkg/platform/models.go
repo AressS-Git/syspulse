@@ -43,7 +43,7 @@ type Alert struct {
 type Device struct {
     ID                  uint `json:"id" gorm:"primaryKey"`
     MacAddress          string `json:"mac_address" gorm:"uniqueIndex"` // Dirección MAC única para identificar al equipo
-    Hostname            string `json:"hostname"` // Único para evitar duplicados
+    Hostname            string `json:"hostname"` // Nombre del host
     Platform            string `json:"platform"` // Plataforma del equipo
     // Relaciones 1:N con las estadísticas y las alertas
     SystemStats         []SystemStats `json:"system_stats" gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
