@@ -211,11 +211,9 @@ function App() {
                             <LineChart data={graphData}>
                                 <CartesianGrid strokeDasharray="3 3" stroke="#363b45" />
                                 <XAxis dataKey="formattedTime" stroke="#A0AABF" />
-                                {/* Forzamos el eje Y de 0 a 100 para porcentajes */}
                                 <YAxis domain={[0, 100]} stroke="#A0AABF" />
                                 <Tooltip />
                                 <Legend />
-                                {/* Colores basados en tu CSS: Rojo para CPU, Amarillo para RAM, Verde para Disco */}
                                 <Line type="monotone" dataKey="cpu" stroke="#ff6b6b" name="CPU Usage" strokeWidth={2} dot={false} activeDot={{ r: 8 }} />
                                 <Line type="monotone" dataKey="ram" stroke="#feca57" name="RAM Usage" strokeWidth={2} dot={false} />
                                 <Line type="monotone" dataKey="disk" stroke="#76AB80" name="Disk Usage" strokeWidth={2} dot={false} />
@@ -233,7 +231,6 @@ function App() {
                                 <YAxis stroke="#A0AABF" />
                                 <Tooltip />
                                 <Legend />
-                                {/* Colores basados en tu CSS: Tonos de azul para la red */}
                                 <Line type="monotone" dataKey="incoming_net_traffic" stroke="#89E4FA" name="Incoming Traffic" strokeWidth={2} dot={false} />
                                 <Line type="monotone" dataKey="outbound_net_traffic" stroke="#00ADD8" name="Outbound Traffic" strokeWidth={2} dot={false} />
                             </LineChart>
