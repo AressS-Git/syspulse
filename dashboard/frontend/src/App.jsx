@@ -82,8 +82,8 @@ function App() {
                         <thead>
                             <tr>
                                 <th>ID</th>
-                                <th>MAC Address</th>
                                 <th>Hostname</th>
+                                <th>MAC Address</th>
                                 <th>Plataforma</th>
                                 <th>Acciones</th>
                             </tr>
@@ -92,18 +92,16 @@ function App() {
                             {devices.map((device) => (
                                 <tr key={device.id}>
                                     <td>{device.id}</td>
-                                    <td>{device.mac_address}</td>
                                     <td>{device.hostname}</td>
+                                    <td>{device.mac_address}</td>
                                     <td>{device.platform}</td>
                                     <td>
                                         <button onClick={() => showStats(device.id)} style={{ marginRight: '10px' }}>
                                             Estadísticas
                                         </button>
-                                        {/* Nuevo botón para las alertas */}
                                         <button onClick={() => showAlerts(device.id)} style={{ marginRight: '10px' }}>
                                             Alertas
                                         </button>
-                                        {/* Nuevo botón para abrir la vista de gráficas */}
                                         <button onClick={() => showGraphs(device.id)}>
                                             Gráficas
                                         </button>
@@ -126,11 +124,14 @@ function App() {
                         <thead>
                             <tr>
                                 <th>ID</th>
+                                <th>Hostname</th>
+                                <th>MAC Address</th>
                                 <th>CPU</th>
                                 <th>RAM</th>
                                 <th>Disco</th>
                                 <th>Incoming Red Traffic</th>
                                 <th>Outbound Red Traffic</th>
+                                <th>Top Procesos (CPU)</th>
                                 <th>Hora</th>
                             </tr>
                         </thead>
@@ -138,11 +139,18 @@ function App() {
                             {stats.map((item) => (
                                 <tr key={item.id}>
                                     <td>{item.id}</td>
+                                    <td>{item.hostname}</td>
+                                    <td>{item.mac_address}</td>
                                     <td>{item?.cpu?.toFixed(2)}%</td>
                                     <td>{item?.ram?.toFixed(2)}%</td>
                                     <td>{item?.disk?.toFixed(2)}%</td>
-                                    <td>{item.incoming_net_traffic} KB/s</td>
-                                    <td>{item.outbound_net_traffic} KB/s</td>
+                                    <td>{(item.incoming_net_traffic / 1024).toFixed(2)} KB/s</td>
+                                    <td>{(item.outbound_net_traffic / 1024).toFixed(2)} KB/s</td>
+                                    <td>
+                                        <div style={{ whiteSpace: 'pre-line', fontSize: '0.9em', textAlign: 'left' }}>
+                                            {item.processes || "Sin datos"}
+                                        </div>
+                                    </td>
                                     <td>{item?.time ? new Date(item.time * 1000).toLocaleTimeString() : "Cargando..."}</td>
                                 </tr>
                             ))}
