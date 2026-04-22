@@ -33,16 +33,15 @@ Para generar los ejecutables finales de forma automática, ejecuta el script de 
 ./build.sh
 ```
 
-#### 3. Lanzar el Servidor (macOS)
-Ejecuta el binario generado para abrir el Dashboard central:
-```bash
-./sys-server
-```
+#### 3. Lanzar el Sistema Completo (macOS)
+El proceso de construcción genera un archivo unificado que lanza el servidor, el agente local y el dashboard automáticamente:
+*   Haz doble clic en **`SysPulse.command`** en la raíz del proyecto.
+*   *(Nota: La primera vez puede requerir Click derecho -> Abrir para saltar la protección de macOS).*
 
-#### 4. Conectar un Agente (Linux / macOS)
-En la máquina remota que quieras monitorizar, lanza el agente indicando la URL del servidor (normalmente puerto 8080):
+#### 4. Conectar un Agente Remoto (Linux / macOS)
+Si quieres monitorizar otras máquinas, lanza el agente allí indicando la URL de tu servidor:
 ```bash
-./pulse-agent -url http://[IP_DE_TU_MAC]:8080/api/stats
+./sys-agent -url http://[IP_DE_TU_MAC]:8080/api/stats
 ```
 
 ---
@@ -53,11 +52,11 @@ En la máquina remota que quieras monitorizar, lanza el agente indicando la URL 
 SysPulse is a lightweight system monitoring tool built for administrators who prioritize efficiency. It consists of Go-based agents that gather real-time hardware metrics from remote servers and display them on a modern, centralized macOS dashboard.
 
 ### Key Features
+* **All-in-One Delivery**: A single `.command` file launches everything you need on your Mac.
 * **Centralized Monitoring**: Manage multiple remote nodes from a single desktop interface.
 * **Real-time Visualization**: Reactive charts providing immediate feedback on system health.
 * **Smart Alerting**: Automatic email notifications (SMTP) triggered by customizable performance thresholds.
 * **Historical Data**: Persistent storage using a zero-config SQLite database.
-* **Resilient Architecture**: Agents feature automatic reconnection logic and low resource overhead.
 
 ### Tech Stack
 * **Core**: Go (Golang) for high-performance backend and agents.
@@ -71,21 +70,20 @@ SysPulse is a lightweight system monitoring tool built for administrators who pr
 Ensure you have Go, Node.js, and the Wails CLI installed on your development machine.
 
 #### 2. Building the Project
-Run the provided build script to compile binaries for both the server and the agents:
+Run the build script to compile everything and generate the portable bundle:
 ```bash
 ./build.sh
 ```
 
-#### 3. Starting the Server (macOS)
-Run the server binary to launch the GUI dashboard:
-```bash
-./sys-server
-```
+#### 3. Starting the System (macOS)
+The build process generates a unified launcher for a seamless experience:
+*   Double-click **`SysPulse.command`** in the project root.
+*   This will automatically start the API server, a local monitoring agent, and the UI dashboard.
 
-#### 4. Starting the Agent (Linux / macOS)
-Deploy the agent to remote machines and connect it to the server's IP address:
+#### 4. Starting a Remote Agent (Linux / macOS)
+Deploy the agent to remote machines and connect it to your server's IP address:
 ```bash
-./pulse-agent -url http://[YOUR_MAC_IP]:8080/api/stats
+./sys-agent -url http://[YOUR_MAC_IP]:8080/api/stats
 ```
 
 ---
